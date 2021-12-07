@@ -3,7 +3,7 @@ import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator } from "rea
 import { GiCartwheel } from "react-icons/gi";
 import { BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
 import { AiOutlineBorderBottom, AiOutlineBorderHorizontal, AiOutlineBorderLeft, AiOutlineBorderRight, AiOutlineBorderTop, AiOutlineBorderVerticle } from "react-icons/ai";
-import React, { createRef, useRef, useState } from 'react';
+import React, { createRef, useState } from 'react';
 import './App.css';
 
 enum NumberColor {

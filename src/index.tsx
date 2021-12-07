@@ -11,7 +11,7 @@ const ForceDarkMode = (props: { children: JSX.Element }) => {
   useEffect(() => {
     if (colorMode === "dark") return;
     toggleColorMode();
-  }, [colorMode]);
+  }, [colorMode, toggleColorMode]);
 
   return props.children;
 }
