@@ -1,15 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, useColorMode } from '@chakra-ui/react';
+
+const ForceDarkMode = (props: { children: JSX.Element }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  useEffect(() => {
+    if (colorMode === "dark") return;
+    toggleColorMode();
+  }, [colorMode]);
+
+  return props.children;
+}
 
 ReactDOM.render(
   <ChakraProvider>
+    <ForceDarkMode>
     <React.StrictMode>
       <App />
     </React.StrictMode>
+    </ForceDarkMode>
   </ChakraProvider>,
   document.getElementById('root')
 );
