@@ -117,7 +117,6 @@ const Header = ({ calledNumbers, setCalledNumbers }: HeaderProps) => {
             description: "Invalid file.",
             position: "top",
             status: "error",
-            variant: "left-accent",
             duration: 3000,
             isClosable: true
           })
