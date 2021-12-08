@@ -1,5 +1,5 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast } from '@chakra-ui/react';
-import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator } from "react-icons/fa";
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, IconButton } from '@chakra-ui/react';
+import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaExpandArrowsAlt } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
 import { AiOutlineBorderBottom, AiOutlineBorderHorizontal, AiOutlineBorderLeft, AiOutlineBorderRight, AiOutlineBorderTop, AiOutlineBorderVerticle } from "react-icons/ai";
@@ -143,6 +143,7 @@ const Header = ({ calledNumbers, setCalledNumbers }: HeaderProps) => {
         </Text>
       </Flex>
 
+
       <ButtonGroup variant="outline" size="sm" mr={2} colorScheme="cyan">
         <Button leftIcon={<FaFileImport />}
           onClick={() => onImport()}
@@ -273,14 +274,14 @@ const ToolsAccordion = () => {
         <AccordionPanel>
           <Flex flexDir="column">
             <Flex display="flex" alignItems="center">
-              <Text minW="35px">I want</Text>
+              <Text minW="35px">I want to be safe for</Text>
               <Input size="lg" variant="flushed" placeholder="#" type="number"
                 maxW="75px" textAlign="center"
                 mx={2}
                 onChange={(e) => setNumberOfBets(parseInt(e.target.value))}
               />
               
-              <Text minW="225px">max bets, with a starting bet of</Text>
+              <Text minW="225px">bets, with a starting bet of</Text>
               <InputGroup maxW="150px" mx={2} size="lg" >
                 <InputLeftElement
                   maxW="20px"
@@ -314,48 +315,72 @@ const RecentlyCalled = ({ calledNumbers }: RecentlyCalledProps) => {
   const [showNumber, setShowNumber] = useState(true);
 
   return (
-    <Flex flexDir="column">
-      <Flex alignItems="center" mb={2}>
-        <Heading size="md">Recently Called:</Heading>
-        <Button ml={2}
+    <Flex flexDir="column" mr={2}>
+      <Flex alignItems="center" mb={2} justifyContent="space-between">
+        <Flex alignItems="center">
+          <Heading size="md">Recently Called:</Heading>
+          <Button ml={2}
+            size="sm"
+            onClick={() => setShowNumber(!showNumber)}
+            leftIcon={showNumber ? <FaEyeSlash /> : <FaEye />}
+            mr={2}
+          >
+            Toggle Text
+          </Button>
+        </Flex>
+        <IconButton aria-label="Open Recently Called modal"
           size="sm"
-          onClick={() => setShowNumber(!showNumber)}
-          leftIcon={showNumber ? <FaEyeSlash /> : <FaEye />}
-        >
-          Toggle Text
-        </Button>
+          variant="outline"
+          icon={<FaExpandArrowsAlt />}
+        />
       </Flex>
-      {
-        calledNumbers.length === 0
-        ? <Flex flex={1}>None called.</Flex>
-        : <SimpleGrid columns={10} flex={1} gap={1} pr={2}
-          mr={2} maxH="188px" overflowY="auto"
-        >
-          {
-            calledNumbers.slice().reverse().map(x => 
-              <Box key={x.time.getTime().toString()}
-                textAlign="center"
-                color="white"
-                borderRadius="sm"
-                width="29px"
-                height="25px"
-                backgroundColor={
-                  x.number.color === NumberColor.Red
-                  ? "red"
-                  : x.number.color === NumberColor.Black
-                    ? "black"
-                    : "green"
-                }
-                fontWeight="semibold"
-              >
-                {
-                  showNumber ? x.number.value : null
-                }
-              </Box>
-            )
-          }
-        </SimpleGrid>
-      }
+      <Flex border="1px solid white" boxShadow="0 0 0 1px white inset" justifyContent="center"
+        borderRadius="md"
+        h="188px" overflow="hidden"
+      >
+        {
+          calledNumbers.length === 0
+          ? <Flex alignItems="center">
+                <FaInfoCircle />
+                <Text ml={2}>No numbers called.</Text>
+          </Flex>
+          : <Flex overflowY="auto"  flex={1} height="inherit"
+            p={2} border="1px solid white" 
+          ><SimpleGrid columns={10} gap={1} flex={1} height="0%" maxH="20px"
+            _after={{
+              content: '" "',
+              display: "block",
+              width: "100%",
+              height: "25px",
+              marginTop: "10px"
+            }}
+          >
+            {
+              calledNumbers.slice().reverse().map(x => 
+                <Box key={x.time.getTime().toString()}
+                  textAlign="center"
+                  color="white"
+                  borderRadius="sm"
+                  width="100%"
+                  height="25px"
+                  backgroundColor={
+                    x.number.color === NumberColor.Red
+                    ? "red"
+                    : x.number.color === NumberColor.Black
+                      ? "black"
+                      : "green"
+                  }
+                  fontWeight="semibold"
+                >
+                  {
+                    showNumber ? x.number.value : null
+                  }
+                </Box>
+              )
+            }
+          </SimpleGrid></Flex>
+        }
+      </Flex>
     </Flex>
   )
 }
@@ -381,7 +406,7 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
   }
 
   return (
-    <Flex flex={1} borderLeft="1px solid var(--chakra-colors-gray-200)" margin={0} marginInlineStart="0 !important"
+    <Flex flex={1} borderLeft="1px solid var(--chakra-colors-gray-700)" margin={0} marginInlineStart="0 !important"
       paddingX={2} flexDir="column"
     >
       <Heading size="md" mb={2} ml={4}>Statistics:</Heading>

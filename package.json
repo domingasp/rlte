@@ -14,9 +14,11 @@
     "@types/lodash": "^4.14.177",
     "@types/node": "^12.20.37",
     "@types/react": "^17.0.37",
+    "@types/react-datepicker": "^4.3.2",
     "@types/react-dom": "^17.0.11",
     "framer-motion": "^4.1.17",
     "react": "^17.0.2",
+    "react-datepicker": "^4.5.0",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
     "react-scripts": "4.0.3",
@@ -28,7 +30,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
