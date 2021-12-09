@@ -484,11 +484,6 @@ const RecentlyCalled = ({ calledNumbers }: RecentlyCalledProps) => {
             Toggle Text
           </Button>
         </Flex>
-        <IconButton aria-label="Open Recently Called modal"
-          size="sm"
-          variant="outline"
-          icon={<FaExpandArrowsAlt />}
-        />
       </Flex>
       <Flex border="1px solid white" boxShadow="0 0 0 1px white inset" justifyContent="center"
         borderRadius="md"
