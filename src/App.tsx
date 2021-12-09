@@ -1,5 +1,5 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, IconButton, FormLabel, Tag } from '@chakra-ui/react';
-import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaExpandArrowsAlt, FaCalendar } from "react-icons/fa";
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
 import { AiOutlineBorderBottom, AiOutlineBorderHorizontal, AiOutlineBorderLeft, AiOutlineBorderRight, AiOutlineBorderTop, AiOutlineBorderVerticle } from "react-icons/ai";
@@ -37,27 +37,42 @@ type CalledNumber = {
 // ## Component Declarations
 // ####################################
 
+const dateToString = (date: Date) => {
+  var options: Intl.DateTimeFormatOptions = {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }
+  return date.toLocaleDateString("en-GB", options);
+}
+
+const getButtonBackgroundColor = (colorProp: NumberColor) => {
+  return colorProp === NumberColor.Red
+    ? "red"
+    : colorProp === NumberColor.Black
+      ? "black"
+      : "green";
+}
+
+const getButtonHoverBackgroundColor = (colorProp: NumberColor) => {
+  return colorProp === NumberColor.Red
+    ? "red.500"
+    : colorProp === NumberColor.Black
+      ? "blackAlpha.600"
+      : "green.500";
+}
+
 type RouletteNumberButtonProps = {
   number: RouletteNumber,
   onClick: (value: RouletteNumber) => void
 }
 const RouletteNumberButton = ({number, onClick}: RouletteNumberButtonProps) => {
-  const backgroundColor = number.color === NumberColor.Red
-    ? "red"
-    : number.color === NumberColor.Black
-      ? "black"
-      : "green";
-  
-  const hoverBackgroundColor = number.color === NumberColor.Red
-    ? "red.500"
-    : number.color === NumberColor.Black
-      ? "blackAlpha.600"
-      : "green.500";
-  
   return (
     <Button
-      backgroundColor={backgroundColor}
-      _hover={{backgroundColor: hoverBackgroundColor}}
+      backgroundColor={getButtonBackgroundColor(number.color)}
+      _hover={{backgroundColor: getButtonHoverBackgroundColor(number.color)}}
       color="white"
       width="50px"
       height="100%"
@@ -327,17 +342,6 @@ const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDa
     return d;
   }
 
-  const dateToString = (date: Date) => {
-    var options: Intl.DateTimeFormatOptions = {
-      year: "2-digit",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit"
-    }
-    return date.toLocaleDateString("en-GB", options);
-  }
-
   return (
     <Accordion mt={4} allowMultiple>
       <AccordionItem>
@@ -466,11 +470,25 @@ const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDa
 
 type RecentlyCalledProps = {
   calledNumbers: CalledNumber[]
+  removeCalledNumber: (number: CalledNumber) => void
 }
-const RecentlyCalled = ({ calledNumbers }: RecentlyCalledProps) => {
+const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledProps) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [activeNumber, setActiveNumber] = useState<CalledNumber>({time: new Date(), number: { value: "1", color: NumberColor.Red }});
   const [showNumber, setShowNumber] = useState(true);
 
+  const onClickHandle = (number: CalledNumber) => {
+    setActiveNumber(number);
+    onOpen();
+  }
+
+  const onDeleteConfirm = (number: CalledNumber) => {
+    removeCalledNumber(number);
+    onClose();
+  }
+
   return (
+    <>
     <Flex flexDir="column" mr={2}>
       <Flex alignItems="center" mb={2} justifyContent="space-between">
         <Flex alignItems="center">
@@ -508,31 +526,57 @@ const RecentlyCalled = ({ calledNumbers }: RecentlyCalledProps) => {
           >
             {
               calledNumbers.slice().reverse().map(x => 
-                <Box key={x.time.getTime().toString()}
-                  textAlign="center"
-                  color="white"
-                  borderRadius="sm"
-                  width="100%"
-                  height="25px"
-                  backgroundColor={
-                    x.number.color === NumberColor.Red
-                    ? "red"
-                    : x.number.color === NumberColor.Black
-                      ? "black"
-                      : "green"
-                  }
-                  fontWeight="semibold"
+                <Button key={x.time.getTime().toString()}
+                  size="sm" height="25px" width="26px"
+                  backgroundColor={getButtonBackgroundColor(x.number.color)}
+                  _hover={{backgroundColor: getButtonHoverBackgroundColor(x.number.color)}}
+                  padding={0}
+                  paddingInlineStart={0}
+                  paddingInlineEnd={0}
+                  minW={0}
+                  onClick={() => onClickHandle(x)}
                 >
                   {
                     showNumber ? x.number.value : null
                   }
-                </Box>
+                </Button>
               )
             }
           </SimpleGrid></Flex>
         }
       </Flex>
     </Flex>
+
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>
+          <Flex>
+            <Text>Delete</Text>
+            <Box backgroundColor={getButtonBackgroundColor(activeNumber.number.color)}
+              width="35px" textAlign="center"
+              mx={2} borderRadius="md"
+            >
+              {activeNumber.number.value}
+            </Box>
+            <Text>called at {dateToString(activeNumber.time)}?</Text>
+          </Flex>
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalFooter>
+          <ButtonGroup size="sm" justifyContent="space-between">
+            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button variant="outline" colorScheme="red"
+              leftIcon={<FaTrash />}
+              onClick={() => onDeleteConfirm(activeNumber)}
+            >
+              Delete
+            </Button>
+          </ButtonGroup>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+    </>
   )
 }
 
@@ -738,6 +782,16 @@ const App = () => {
     setCalledNumbers(curr => [...curr, cn]);
   }
 
+  const removeCalledNumber = (number: CalledNumber) => {
+    var called = _.cloneDeep(calledNumbers);
+    var idxToRemove = called.findIndex(x => x.time.getTime() === number.time.getTime());
+    if (idxToRemove !== -1) {
+      called.splice(idxToRemove, 1);
+
+      setCalledNumbers(called);
+    }
+  }
+
   const filterCalledByDate = () => {
     return _.cloneDeep(calledNumbers).filter(x => {
       var t = x.time.getTime();
@@ -775,7 +829,10 @@ const App = () => {
           <HStack flex={1} mt={2} alignItems="flex-start">
             
             <Flex flexDir="column" flex={1}>
-              <RecentlyCalled calledNumbers={filterCalledByDate()} />
+              <RecentlyCalled
+                calledNumbers={filterCalledByDate()}
+                removeCalledNumber={removeCalledNumber}
+              />
             </Flex>
             
             <StatsTable calledNumbers={filterCalledByDate()} />
