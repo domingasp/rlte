@@ -738,6 +738,21 @@ const App = () => {
     setCalledNumbers(curr => [...curr, cn]);
   }
 
+  const filterCalledByDate = () => {
+    return _.cloneDeep(calledNumbers).filter(x => {
+      var t = x.time.getTime();
+      if (filteredStartDate && filteredStartDate.getTime() > t) {
+        return false;
+      }
+
+      if (filteredEndDate && filteredEndDate.getTime() < t) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
   return (
     <Flex flexDir="column" justifyContent="center">
       <Header
@@ -760,21 +775,10 @@ const App = () => {
           <HStack flex={1} mt={2} alignItems="flex-start">
             
             <Flex flexDir="column" flex={1}>
-              <RecentlyCalled calledNumbers={_.cloneDeep(calledNumbers).filter(x => {
-                var t = x.time.getTime();
-                if (filteredStartDate && filteredStartDate.getTime() > t) {
-                  return false;
-                }
-
-                if (filteredEndDate && filteredEndDate.getTime() < t) {
-                  return false;
-                }
-
-                return true;
-              })} />
+              <RecentlyCalled calledNumbers={filterCalledByDate()} />
             </Flex>
             
-            <StatsTable calledNumbers={calledNumbers} />
+            <StatsTable calledNumbers={filterCalledByDate()} />
           </HStack>
         </Flex>
       </Flex>
