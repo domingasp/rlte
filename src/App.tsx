@@ -1,10 +1,16 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, IconButton } from '@chakra-ui/react';
-import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaExpandArrowsAlt } from "react-icons/fa";
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, IconButton, FormLabel, Tag } from '@chakra-ui/react';
+import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaExpandArrowsAlt, FaCalendar } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
-import { BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
+import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
 import { AiOutlineBorderBottom, AiOutlineBorderHorizontal, AiOutlineBorderLeft, AiOutlineBorderRight, AiOutlineBorderTop, AiOutlineBorderVerticle } from "react-icons/ai";
 import React, { createRef, useState } from 'react';
 import './App.css';
+import ReactDatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import "./react-datepicker.css";
+import _ from 'lodash';
+
+const MS_PER_MINUTE = 60000;
 
 // ####################################
 // ## Type Declarations
@@ -128,6 +134,7 @@ const Header = ({ calledNumbers, setCalledNumbers }: HeaderProps) => {
   }
 
   const importInputRef = createRef<HTMLInputElement>();
+
   return (
     <Flex backgroundColor="gray.900" alignItems="center"
       justifyContent="space-between"
@@ -142,7 +149,6 @@ const Header = ({ calledNumbers, setCalledNumbers }: HeaderProps) => {
           RLTE
         </Text>
       </Flex>
-
 
       <ButtonGroup variant="outline" size="sm" mr={2} colorScheme="cyan">
         <Button leftIcon={<FaFileImport />}
@@ -219,7 +225,7 @@ const RouletteTable = ({ appendToCalled }: RouletteTableProps) => {
   ];
 
   return (
-    <Flex maxWidth="700px" justifyContent="center" mt={4}>
+    <Flex maxWidth="700px" justifyContent="center" mt={3}>
       <Grid
         templateRows="repeat(6, 1fr)"
         templateColumns="repeat(13, 1fr)"
@@ -249,7 +255,13 @@ const RouletteTable = ({ appendToCalled }: RouletteTableProps) => {
   )
 }
 
-const ToolsAccordion = () => {
+type ToolsAccordionProps = {
+  filteredStartDate: Date | undefined,
+  filteredEndDate: Date | undefined,
+  setFilteredStartDate: (newDate: Date | undefined) => void,
+  setFilteredEndDate: (newDate: Date | undefined) => void,
+}
+const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDate, setFilteredEndDate }: ToolsAccordionProps) => {
   const [numberOfBets, setNumberOfBets] = useState<number>(0);
   const [startingBet, setStartingBet] = useState<number>(0);
   const totalNeeded = () => {
@@ -259,6 +271,71 @@ const ToolsAccordion = () => {
     }
 
     return sum - startingBet;
+  }
+
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
+  const [isFiltered, setIsFiltered] = useState(false);
+
+  const onClickApply = () => {
+    setFilteredStartDate(startDate);
+    setFilteredEndDate(endDate);
+    setIsFiltered(true);
+  }
+
+  const onClickLastXTime = (minutes: number) => {
+    var closest15Mins = getClosest15Mins(new Date(), "ceil");
+    var oneHourAgo = new Date(closest15Mins.getTime() - (minutes * MS_PER_MINUTE));
+
+    setStartDate(oneHourAgo);
+    setEndDate(closest15Mins);
+    setFilteredStartDate(oneHourAgo);
+    setFilteredEndDate(closest15Mins);
+    setIsFiltered(true);
+  }
+
+  const onClickClear = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setFilteredStartDate(undefined);
+    setFilteredEndDate(undefined);
+    setIsFiltered(false);
+  }
+
+  const getClosest15Mins = (date: Date, type: "round" | "ceil" | "floor") => {
+    var d = _.clone(date);
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+
+    var m = (Math.floor(minutes/15) * 15) % 60;
+    var h = minutes > 52 ? (hours === 23 ? 0 : hours + 1) : hours;
+    if (type === "round") {
+      m = (Math.round(minutes/15) * 15) % 60;
+    } else if (type === "ceil") {
+      m = (Math.ceil(minutes/15) * 15) % 60;
+      if (m === 0 && h !== hours + 1) {
+        h = hours + 1;
+      }
+    }
+    else {
+      h = hours;
+    }
+
+    d.setMinutes(m, 0, 0);
+    d.setHours(h);
+    return d;
+  }
+
+  const dateToString = (date: Date) => {
+    var options: Intl.DateTimeFormatOptions = {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+    return date.toLocaleDateString("en-GB", options);
   }
 
   return (
@@ -300,6 +377,85 @@ const ToolsAccordion = () => {
             <Flex mt={4} alignItems="center">
               <Text fontWeight="bold">You will need:</Text>
               <Text ml={8} fontSize="2xl">${totalNeeded()}</Text>
+            </Flex>
+          </Flex>
+        </AccordionPanel>
+      </AccordionItem>
+      <AccordionItem>
+        <AccordionButton>
+          <Flex alignItems="center" flex={1}>
+            <FaCalendar />
+            <Text ml={4}>Filter by Date</Text>
+          </Flex>
+          {
+            isFiltered
+            ? <Flex alignItems="center" mr={2}>
+              {
+                (filteredStartDate && <Tag colorScheme="cyan">{dateToString(filteredStartDate)}</Tag>)
+                || <Tag colorScheme="cyan">No start date</Tag>
+              }
+              <Box mx={2}><BsArrowRight /></Box>
+              {
+                (filteredEndDate && <Tag colorScheme="cyan">{dateToString(filteredEndDate)}</Tag>)
+                || <Tag colorScheme="cyan">No end date</Tag>
+              }
+            </Flex>
+            : null
+          }
+          <AccordionIcon />
+        </AccordionButton>
+        <AccordionPanel>
+          <Flex flexDirection="column">
+            <Flex alignItems="center">
+              <FormLabel mb={0} mr={2} flex={1}>Date Range:</FormLabel>
+              <ReactDatePicker
+                dateFormat="dd/MM/yy HH:mm"
+                selected={startDate}
+                onChange={(date) => setStartDate(date as Date)}
+                selectsStart
+
+                showTimeSelect
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={endDate}
+                
+                timeFormat="HH:mm"
+                timeIntervals={15}
+
+                placeholderText="Start Date..."
+              />
+              <Box flex={0} mx={4}><BsArrowRight /></Box>
+              <ReactDatePicker
+                dateFormat="dd/MM/yy HH:mm"
+                selected={endDate}
+                onChange={(date) => setEndDate(date as Date)}
+                selectsEnd
+
+                showTimeSelect
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+
+                timeFormat="HH:mm"
+                timeIntervals={15}
+
+                placeholderText="End Date..."
+              />
+
+              <Button size="sm" colorScheme="cyan" variant="outline" ml={4}
+                onClick={onClickApply} isDisabled={!startDate && !endDate}
+              >
+                Apply
+              </Button>
+            </Flex>
+            <Flex mt={4} alignContent="center">
+              <FormLabel mb={0} mr={2} flex={1} alignSelf="center">Quick Filter:</FormLabel>
+              <ButtonGroup colorScheme="cyan" size="sm" variant="outline">
+                <Button onClick={() => onClickLastXTime(60)}>Last hour</Button>
+                <Button onClick={() => onClickLastXTime(30)}>Last 30 mins</Button>
+                <Button onClick={() => onClickLastXTime(15)}>Last 15 mins</Button>
+                <Button colorScheme="red" onClick={onClickClear}>Clear</Button>
+              </ButtonGroup>
             </Flex>
           </Flex>
         </AccordionPanel>
@@ -575,6 +731,9 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
 
 const App = () => {
   const [calledNumbers, setCalledNumbers] = useState<CalledNumber[]>([]);
+
+  const [filteredStartDate, setFilteredStartDate] = useState<Date | undefined>(undefined);
+  const [filteredEndDate, setFilteredEndDate] = useState<Date | undefined>(undefined);
   
   const appendToCalled = (number: RouletteNumber) => {
     var cn: CalledNumber = {
@@ -595,13 +754,29 @@ const App = () => {
       >
         <RouletteTable appendToCalled={appendToCalled} />
         
-        <ToolsAccordion />
+        <ToolsAccordion
+          filteredStartDate={filteredStartDate}
+          filteredEndDate={filteredEndDate}
+          setFilteredStartDate={setFilteredStartDate}
+          setFilteredEndDate={setFilteredEndDate}        
+        />
         
         <Flex mt={2} flexDir="column">
           <HStack flex={1} mt={2} alignItems="flex-start">
             
             <Flex flexDir="column" flex={1}>
-              <RecentlyCalled calledNumbers={calledNumbers} />
+              <RecentlyCalled calledNumbers={_.cloneDeep(calledNumbers).filter(x => {
+                var t = x.time.getTime();
+                if (filteredStartDate && filteredStartDate.getTime() > t) {
+                  return false;
+                }
+
+                if (filteredEndDate && filteredEndDate.getTime() < t) {
+                  return false;
+                }
+
+                return true;
+              })} />
             </Flex>
             
             <StatsTable calledNumbers={calledNumbers} />
