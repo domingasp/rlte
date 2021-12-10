@@ -1,4 +1,4 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter } from '@chakra-ui/react';
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack } from '@chakra-ui/react';
 import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
@@ -8,6 +8,10 @@ import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import "./react-datepicker.css";
 import _ from 'lodash';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
+
+import "./recharts.css"
+import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 const MS_PER_MINUTE = 60000;
 
@@ -30,6 +34,65 @@ type CalledNumber = {
   time: Date,
   number: RouletteNumber
 }
+
+type BarChartDataType = {
+  name: string,
+  amt: number,
+  fill: string,
+  stroke: string
+}
+
+const rouletteNumbers: RouletteNumber[][] = [
+  // Top row
+  [
+    { value: "00", color: NumberColor.Green },
+    { value: "3", color: NumberColor.Red},
+    { value: "6", color: NumberColor.Black},
+    { value: "9", color: NumberColor.Red},
+    { value: "12", color: NumberColor.Red},
+    { value: "15", color: NumberColor.Black},
+    { value: "18", color: NumberColor.Red},
+    { value: "21", color: NumberColor.Red},
+    { value: "24", color: NumberColor.Black},
+    { value: "27", color: NumberColor.Red},
+    { value: "30", color: NumberColor.Red},
+    { value: "33", color: NumberColor.Black},
+    { value: "36", color: NumberColor.Red}
+  ],
+
+  // Mid row
+  [
+    { value: "2", color: NumberColor.Black},
+    { value: "5", color: NumberColor.Red},
+    { value: "8", color: NumberColor.Black},
+    { value: "11", color: NumberColor.Black},
+    { value: "14", color: NumberColor.Red},
+    { value: "17", color: NumberColor.Black},
+    { value: "20", color: NumberColor.Black},
+    { value: "23", color: NumberColor.Red},
+    { value: "26", color: NumberColor.Black},
+    { value: "29", color: NumberColor.Black},
+    { value: "32", color: NumberColor.Red},
+    { value: "35", color: NumberColor.Black}
+  ],
+
+  // Bot row
+  [
+    { value: "0", color: NumberColor.Green },
+    { value: "1", color: NumberColor.Red},
+    { value: "4", color: NumberColor.Black},
+    { value: "7", color: NumberColor.Red},
+    { value: "10", color: NumberColor.Black},
+    { value: "13", color: NumberColor.Black},
+    { value: "16", color: NumberColor.Red},
+    { value: "19", color: NumberColor.Red},
+    { value: "22", color: NumberColor.Black},
+    { value: "25", color: NumberColor.Red},
+    { value: "28", color: NumberColor.Black},
+    { value: "31", color: NumberColor.Black},
+    { value: "34", color: NumberColor.Red}
+  ]
+];
 
 
 // ####################################
@@ -186,58 +249,6 @@ type RouletteTableProps = {
   appendToCalled: (num: RouletteNumber) => void
 }
 const RouletteTable = ({ appendToCalled }: RouletteTableProps) => {
-  const rouletteNumbers: RouletteNumber[][] = [
-    // Top row
-    [
-      { value: "00", color: NumberColor.Green },
-      { value: "3", color: NumberColor.Red},
-      { value: "6", color: NumberColor.Black},
-      { value: "9", color: NumberColor.Red},
-      { value: "12", color: NumberColor.Red},
-      { value: "15", color: NumberColor.Black},
-      { value: "18", color: NumberColor.Red},
-      { value: "21", color: NumberColor.Red},
-      { value: "24", color: NumberColor.Black},
-      { value: "27", color: NumberColor.Red},
-      { value: "30", color: NumberColor.Red},
-      { value: "33", color: NumberColor.Black},
-      { value: "36", color: NumberColor.Red}
-    ],
-
-    // Mid row
-    [
-      { value: "2", color: NumberColor.Black},
-      { value: "5", color: NumberColor.Red},
-      { value: "8", color: NumberColor.Black},
-      { value: "11", color: NumberColor.Black},
-      { value: "14", color: NumberColor.Red},
-      { value: "17", color: NumberColor.Black},
-      { value: "20", color: NumberColor.Black},
-      { value: "23", color: NumberColor.Red},
-      { value: "26", color: NumberColor.Black},
-      { value: "29", color: NumberColor.Black},
-      { value: "32", color: NumberColor.Red},
-      { value: "35", color: NumberColor.Black}
-    ],
-
-    // Bot row
-    [
-      { value: "0", color: NumberColor.Green },
-      { value: "1", color: NumberColor.Red},
-      { value: "4", color: NumberColor.Black},
-      { value: "7", color: NumberColor.Red},
-      { value: "10", color: NumberColor.Black},
-      { value: "13", color: NumberColor.Black},
-      { value: "16", color: NumberColor.Red},
-      { value: "19", color: NumberColor.Red},
-      { value: "22", color: NumberColor.Black},
-      { value: "25", color: NumberColor.Red},
-      { value: "28", color: NumberColor.Black},
-      { value: "31", color: NumberColor.Black},
-      { value: "34", color: NumberColor.Red}
-    ]
-  ];
-
   return (
     <Flex maxWidth="700px" justifyContent="center" mt={3}>
       <Grid
@@ -579,6 +590,85 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
   )
 }
 
+type DistributionGraphProps = {
+  calledNumbers: CalledNumber[]
+}
+const DistributionGraph = ({ calledNumbers }: DistributionGraphProps) => {
+  const mapCalledNumbersToGraphData = () => {
+    var flattenedRouletteNumbers = rouletteNumbers.reduce((accumulator, value) => accumulator.concat(value), [])
+    
+    var data: BarChartDataType[] = flattenedRouletteNumbers.map(x => {
+      var count = calledNumbers.reduce((acc, {number}) => x.value === number.value ? ++acc : acc, 0);
+
+      return {
+        name: x.value,
+        amt: count,
+        fill: getButtonBackgroundColor(x.color),
+        stroke: x.color === NumberColor.Black ? "var(--chakra-colors-gray-500)" : ""
+      };
+    });
+
+    data.sort((a : BarChartDataType, b: BarChartDataType) => {
+      return parseInt(a.name) < (parseInt(b.name)) ? -1 : 1;
+    });
+    
+    return data;
+  }
+
+  const CustomGraphTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
+    if (active) {
+      var rouletteNumber = rouletteNumbers.reduce((accumulator, value) => accumulator.concat(value), []).find(x => x.value === label)!
+      var val = payload![0].value!;
+      var percentage = Math.round((val as number / calledNumbers.length) * 10000) / 100;
+      return (
+        <Flex
+          color="gray.900"
+          backgroundColor="gray.300"
+          paddingX={2}
+          paddingY={1}
+          fontSize="sm"
+          fontWeight="medium"
+          borderRadius="sm"
+          boxShadow="md"
+          maxW="320px"
+        >
+          <Text backgroundColor={getButtonBackgroundColor(rouletteNumber.color)}
+            color="white" borderRadius="md" width="26px" textAlign="center"
+            mr={2}
+          >
+            {label}
+          </Text>
+          <Text mr={2}>Called:</Text>
+          <Text>{val} ({percentage}%)</Text>
+        </Flex>
+      );
+    }
+  
+    return null;
+  };
+
+  return (
+    <Flex mt={4} flexDirection="column">
+      <Heading size="md" mb={4}>Distribution:</Heading>
+      <ResponsiveContainer width="96%" height={250}>
+        <BarChart
+          width={500}
+          height={400}
+          data={mapCalledNumbersToGraphData()}
+        >
+          <CartesianGrid vertical={false} stroke="var(--chakra-colors-gray-700)" />
+          <XAxis dataKey="name" stroke="var(--chakra-colors-gray-200)" type={"category"} interval={1}
+            angle={-90} tick={{ fontSize: 14, dx: -5, dy: 10 }}
+          />
+          <YAxis allowDecimals={false} width={30} stroke="var(--chakra-colors-gray-200)" />
+          <Bar dataKey="amt" />
+          <Tooltip content={<CustomGraphTooltip />} />
+        </BarChart>
+      </ResponsiveContainer>
+    </Flex>
+  )
+}
+
 type StatsTableProps = {
   calledNumbers: CalledNumber[]
 }
@@ -791,7 +881,7 @@ const App = () => {
     }
   }
 
-  const filterCalledByDate = () => {
+  const filterCalledByDate = (): CalledNumber[] => {
     return _.cloneDeep(calledNumbers).filter(x => {
       var t = x.time.getTime();
       if (filteredStartDate && filteredStartDate.getTime() > t) {
@@ -831,6 +921,10 @@ const App = () => {
               <RecentlyCalled
                 calledNumbers={filterCalledByDate()}
                 removeCalledNumber={removeCalledNumber}
+              />
+
+              <DistributionGraph
+                calledNumbers={filterCalledByDate()}
               />
             </Flex>
             
