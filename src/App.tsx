@@ -1,10 +1,9 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter } from '@chakra-ui/react';
 import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
 import { AiOutlineBorderBottom, AiOutlineBorderHorizontal, AiOutlineBorderLeft, AiOutlineBorderRight, AiOutlineBorderTop, AiOutlineBorderVerticle } from "react-icons/ai";
 import React, { createRef, useState } from 'react';
-import './App.css';
 import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import "./react-datepicker.css";
