@@ -158,7 +158,7 @@ const Header = ({ calledNumbers, setCalledNumbers }: HeaderProps) => {
   }
 
   const onExport = () => {
-    var stringedCalledNumbers = calledNumbers.map(x => JSON.stringify(x)).join("~");
+    var stringedCalledNumbers = calledNumbers.map(x => `${x.number.value}:${x.time.getTime()}`).join(",");
     
     const elem = document.createElement("a");
     const file = new Blob(
@@ -177,14 +177,23 @@ const Header = ({ calledNumbers, setCalledNumbers }: HeaderProps) => {
       
       reader.onload = () => {
         var loaded = reader.result as string;
-        var split = loaded.split("~");
         
         try {
+          let fileStructureRegex = /^(\d\d?:\d{13},)*(\d\d?:\d{13})$/;
+          if (!fileStructureRegex.test(loaded)) {
+            throw Error
+          }
+
+          var split = loaded.split(",");
           var parsed: CalledNumber[] = split.map(x => {
-            var parsedX = JSON.parse(x);
+            var parsedX = x.split(":");
+            var rouletteNumber = rouletteNumbers.reduce((accumulator, value) => accumulator.concat(value), []).find(y => y.value === parsedX[0]);
+            if (!rouletteNumber) {
+              rouletteNumber = rouletteNumbers[0][0];
+            }
             return {
-              number: parsedX.number,
-              time: new Date(parsedX.time)
+              number: rouletteNumber,
+              time: new Date(parseInt(parsedX[1]))
             }
           });
           
