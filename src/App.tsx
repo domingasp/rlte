@@ -1,4 +1,4 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack } from '@chakra-ui/react';
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack, Divider, Checkbox } from '@chakra-ui/react';
 import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
@@ -682,18 +682,18 @@ type StatsTableProps = {
   calledNumbers: CalledNumber[]
 }
 const StatsTable = ({ calledNumbers }: StatsTableProps) => {
-  const getCountByColor = (color: NumberColor) => {
+  const getCountByColor = (calledNumbers: CalledNumber[], color: NumberColor) => {
     return calledNumbers.filter(x => x.number.color === color).length;
   }
-
-  const getCountByModulo = (modulo: number, shouldEqual: number) => {
+  
+  const getCountByModulo = (calledNumbers: CalledNumber[], modulo: number, shouldEqual: number) => {
     return calledNumbers.filter(x => parseInt(x.number.value) > 0 && parseInt(x.number.value) % modulo === shouldEqual).length;
   }
-
-  const getCountByRange = (start: number, end: number) => {
+  
+  const getCountByRange = (calledNumbers: CalledNumber[], start: number, end: number) => {
     return calledNumbers.filter(x => parseInt(x.number.value) >= start && parseInt(x.number.value) <= end).length;
   }
-
+  
   const getPercentageOfTotal = (count: number) => {
     return Math.round((count / calledNumbers.length) * 10000) / 100;
   }
@@ -726,8 +726,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Red
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByColor(NumberColor.Red)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByColor(NumberColor.Red))} %</Td>
+            <Td isNumeric>{getCountByColor(calledNumbers, NumberColor.Red)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByColor(calledNumbers, NumberColor.Red))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -738,8 +738,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Black
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByColor(NumberColor.Black)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByColor(NumberColor.Black))} %</Td>
+            <Td isNumeric>{getCountByColor(calledNumbers, NumberColor.Black)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByColor(calledNumbers, NumberColor.Black))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -750,8 +750,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Green
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByColor(NumberColor.Green)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByColor(NumberColor.Green))} %</Td>
+            <Td isNumeric>{getCountByColor(calledNumbers, NumberColor.Green)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByColor(calledNumbers, NumberColor.Green))} %</Td>
           </Tr>
 
           <Tr borderTopWidth={3}>
@@ -763,8 +763,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Even
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByModulo(2, 0)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(2, 0))} %</Td>
+            <Td isNumeric>{getCountByModulo(calledNumbers, 2, 0)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(calledNumbers, 2, 0))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -773,8 +773,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Odd
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByModulo(2, 1)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(2, 1))} %</Td>
+            <Td isNumeric>{getCountByModulo(calledNumbers, 2, 1)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(calledNumbers, 2, 1))} %</Td>
           </Tr>
 
           <Tr borderTopWidth={3}>
@@ -784,8 +784,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 1-18
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByRange(1, 18)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByRange(1, 18))} %</Td>
+            <Td isNumeric>{getCountByRange(calledNumbers, 1, 18)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByRange(calledNumbers, 1, 18))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -794,8 +794,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 19-36
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByRange(19, 36)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByRange(19, 36))} %</Td>
+            <Td isNumeric>{getCountByRange(calledNumbers, 19, 36)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByRange(calledNumbers, 19, 36))} %</Td>
           </Tr>
 
           <Tr borderTopWidth={3}>
@@ -805,8 +805,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 1st 12
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByRange(1, 12)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByRange(1, 12))} %</Td>
+            <Td isNumeric>{getCountByRange(calledNumbers, 1, 12)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByRange(calledNumbers, 1, 12))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -815,8 +815,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 2nd 12
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByRange(13, 24)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByRange(13, 24))} %</Td>
+            <Td isNumeric>{getCountByRange(calledNumbers, 13, 24)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByRange(calledNumbers, 13, 24))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -825,8 +825,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 3rd 12
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByRange(25, 36)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByRange(25, 36))} %</Td>
+            <Td isNumeric>{getCountByRange(calledNumbers, 25, 36)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByRange(calledNumbers, 25, 36))} %</Td>
           </Tr>
 
           <Tr borderTopWidth={3}>
@@ -836,8 +836,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Top 2 to 1
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByModulo(3, 0)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(3, 0))} %</Td>
+            <Td isNumeric>{getCountByModulo(calledNumbers, 3, 0)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(calledNumbers, 3, 0))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -846,8 +846,8 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Mid 2 to 1
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByModulo(3, 2)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(3, 2))} %</Td>
+            <Td isNumeric>{getCountByModulo(calledNumbers, 3, 2)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(calledNumbers, 3, 2))} %</Td>
           </Tr>
           <Tr>
             <Td>
@@ -856,13 +856,185 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
                 Bot 2 to 1
               </Flex>
             </Td>
-            <Td isNumeric>{getCountByModulo(3, 1)}</Td>
-            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(3, 1))} %</Td>
+            <Td isNumeric>{getCountByModulo(calledNumbers, 3, 1)}</Td>
+            <Td isNumeric>{getPercentageOfTotal(getCountByModulo(calledNumbers, 3, 1))} %</Td>
           </Tr>
 
         </Tbody>
       </Table>
     </Flex>
+  )
+}
+
+type NumberStatProps = {
+  label: string,
+  value: number,
+  leftIcon?: React.ReactNode
+}
+const NumberStat = ({ label, value, leftIcon }: NumberStatProps) => {
+  return (
+    <VStack border="1px solid white" px={4} py={3} borderRadius="md" flex={1}>
+      <HStack>
+        { leftIcon }
+        <Heading size="md" alignSelf="flex-start" fontWeight="md">{label}</Heading>
+      </HStack>
+      <Text fontSize="4xl" fontWeight="semibold">{value}</Text>
+    </VStack>
+  )
+}
+
+type MaxInARowStatsProps = {
+  calledNumbers: CalledNumber[]
+}
+const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
+  const [includeGreen, setIncludeGreen] = useState(false);
+
+  const maxColorsInRow = (color: NumberColor, includeGreen: boolean) => {
+    var numbers = _.cloneDeep(calledNumbers);
+    
+    // Sort
+    numbers.sort((a: CalledNumber, b: CalledNumber) => {
+      return a.time.getTime() - b.time.getTime();
+    });
+    
+    var max = 0;
+    var currentMax = 0;
+    numbers.forEach(x => {
+      if (x.number.color === color || (includeGreen && x.number.color == NumberColor.Green)) {
+        currentMax += 1;
+      } else {
+        if (currentMax > max) {
+          max = currentMax;
+        }
+
+        currentMax = 0;
+      }
+    });
+
+    return max;
+  }
+
+  const maxHalfTableInRow = (half: "1-18" | "19-36", includeGreen: boolean) => {
+    var numbers = _.cloneDeep(calledNumbers);
+    
+    // Sort
+    numbers.sort((a: CalledNumber, b: CalledNumber) => {
+      return a.time.getTime() - b.time.getTime();
+    });
+
+    const minInRange = half === "1-18" ? 1 : 19;
+    const maxInRange = half === "1-18" ? 18 : 36;
+
+    var max = 0;
+    var currentMax = 0;
+    numbers.forEach(x => {
+      if ((parseInt(x.number.value) >= minInRange && parseInt(x.number.value) <= maxInRange)
+        || (includeGreen && x.number.color == NumberColor.Green)) {
+        currentMax += 1;
+      } else {
+        if (currentMax > max) {
+          max = currentMax;
+        }
+
+        currentMax = 0;
+      }
+    });
+
+    return max;
+  }
+
+  const maxEvenOddRow = (even: boolean, includeGreen: boolean) => {
+    var numbers = _.cloneDeep(calledNumbers);
+    
+    // Sort
+    numbers.sort((a: CalledNumber, b: CalledNumber) => {
+      return a.time.getTime() - b.time.getTime();
+    });
+
+    const modulo = 2;
+    const shouldEqual = even ? 0 : 1
+
+    var max = 0;
+    var currentMax = 0;
+    numbers.forEach(x => {
+      if ((parseInt(x.number.value) > 0 && parseInt(x.number.value) % modulo === shouldEqual)
+        || (includeGreen && x.number.color == NumberColor.Green)) {
+        currentMax += 1;
+      } else {
+        if (currentMax > max) {
+          max = currentMax;
+        }
+
+        currentMax = 0;
+      }
+    });
+
+    return max;
+  }
+
+
+  return (
+    <VStack>
+      <HStack mb={4} alignSelf="stretch">
+        <Heading size="md" alignSelf="flex-start" flex={1}>Max numbers in a row:</Heading>
+        <Checkbox
+          size="lg"
+          value={"includeGreen"}
+          onChange={(e) => setIncludeGreen(!includeGreen)}
+        >
+          <HStack fontSize="md">
+            <Text>Include</Text>
+            <Flex display="inline-flex" backgroundColor="green" width="15px" height="15px" borderRadius="full" ml="1px" />
+            <Text>Green</Text>
+          </HStack>
+        </Checkbox>
+      </HStack>
+        <SimpleGrid columns={6} gap={3} flex={1} alignSelf="stretch">
+          <GridItem colSpan={3}>
+            <NumberStat label="Even" value={maxEvenOddRow(true, includeGreen)}
+              leftIcon={<BsSquareHalf size="20px" />}
+            />
+          </GridItem>
+          <GridItem colSpan={3}>
+            <NumberStat label="Odd" value={maxEvenOddRow(false, includeGreen)}
+              leftIcon={<BsTriangleHalf size="20px" />}
+            />
+          </GridItem>
+
+          <GridItem colSpan={2}>
+            <NumberStat label="Red" value={maxColorsInRow(NumberColor.Red, includeGreen)}
+              leftIcon={<Flex backgroundColor="red" width="15px" height="15px"
+                borderRadius="full" ml="1px"
+              />}
+            />
+          </GridItem>
+          <GridItem colSpan={2}>
+            <NumberStat label="Black" value={maxColorsInRow(NumberColor.Black, includeGreen)}
+              leftIcon={<Flex backgroundColor="black" width="15px" height="15px"
+                borderRadius="full" ml="1px"
+              />}
+            />
+          </GridItem>
+          <GridItem colSpan={2}>
+            <NumberStat label="Green" value={maxColorsInRow(NumberColor.Green, includeGreen)}
+              leftIcon={<Flex backgroundColor="green" width="15px" height="15px"
+                borderRadius="full" ml="1px"
+              />}
+            />
+          </GridItem>
+
+          <GridItem colSpan={3}>
+            <NumberStat label="1-18" value={maxHalfTableInRow("1-18", includeGreen)}
+              leftIcon={<BsCircleHalf size="20px" />}
+            />
+          </GridItem>
+          <GridItem colSpan={3}>
+            <NumberStat label="19-36" value={maxHalfTableInRow("19-36", includeGreen)}
+              leftIcon={<Flex transform="rotate(180deg)"><BsCircleHalf size="20px" /></Flex>}
+            />
+          </GridItem>
+      </SimpleGrid>
+    </VStack>
   )
 }
 
@@ -940,6 +1112,9 @@ const App = () => {
             <StatsTable calledNumbers={filterCalledByDate()} />
           </HStack>
         </Flex>
+        <Divider my={4} />
+        <MaxInARowStats calledNumbers={calledNumbers} />
+
       </Flex>
     </Flex>
   );
