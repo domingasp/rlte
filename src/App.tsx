@@ -1117,7 +1117,7 @@ const App = () => {
           </HStack>
         </Flex>
         <Divider my={4} />
-        <MaxInARowStats calledNumbers={calledNumbers} />
+        <MaxInARowStats calledNumbers={filterCalledByDate()} />
 
       </Flex>
     </Flex>
