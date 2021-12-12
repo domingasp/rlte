@@ -873,13 +873,17 @@ type NumberStatProps = {
 }
 const NumberStat = ({ label, value, leftIcon }: NumberStatProps) => {
   return (
-    <VStack border="1px solid white" px={4} py={3} borderRadius="md" flex={1}>
-      <HStack>
-        { leftIcon }
-        <Heading size="md" alignSelf="flex-start" fontWeight="md">{label}</Heading>
+    <HStack border="1px solid white" px={4} py={3} borderRadius="md" flex={1}>
+      <HStack maxW="128px" flex={1}>
+        <HStack px={3}>
+          { leftIcon }
+          <Heading size="md" alignSelf="flex-start" fontWeight="md">
+            {label}
+          </Heading>
+        </HStack>
       </HStack>
-      <Text fontSize="4xl" fontWeight="semibold">{value}</Text>
-    </VStack>
+      <Text fontSize="4xl" flex={1} fontWeight="semibold" textAlign="center">{value}</Text>
+    </HStack>
   )
 }
 
