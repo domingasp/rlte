@@ -323,9 +323,9 @@ const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDa
     var oneHourAgo = new Date(closest15Mins.getTime() - (minutes * MS_PER_MINUTE));
 
     setStartDate(oneHourAgo);
-    setEndDate(closest15Mins);
+    setEndDate(undefined);
     setFilteredStartDate(oneHourAgo);
-    setFilteredEndDate(closest15Mins);
+    setFilteredEndDate(undefined);
     setIsFiltered(true);
   }
 
@@ -535,6 +535,7 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
           : <Flex overflowY="auto"  flex={1} height="inherit"
             p={2} border="1px solid white" 
           ><SimpleGrid columns={10} gap={1} flex={1} height="0%" maxH="20px"
+            borderRadius="md"
             _after={{
               content: '" "',
               display: "block",
@@ -915,6 +916,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
       }
     });
 
+    if (max == 0) max = currentMax;
     return max;
   }
 
@@ -944,6 +946,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
       }
     });
 
+    if (max == 0) max = currentMax;
     return max;
   }
 
@@ -973,6 +976,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
       }
     });
 
+    if (max == 0) max = currentMax;
     return max;
   }
 
