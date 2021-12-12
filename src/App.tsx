@@ -980,7 +980,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
   return (
     <VStack>
       <HStack mb={4} alignSelf="stretch">
-        <Heading size="md" alignSelf="flex-start" flex={1}>Max numbers in a row:</Heading>
+        <Heading size="md" alignSelf="flex-start" flex={1}>Max Numbers in a Row:</Heading>
         <Checkbox
           size="lg"
           value={"includeGreen"}
@@ -1089,6 +1089,7 @@ const App = () => {
       />
       <Flex maxWidth="800px" flexDir="column" flex={1} alignSelf="center"
         padding={4}
+        pb={{"base": 8, "md": 4}}
       >
         <RouletteTable appendToCalled={appendToCalled} />
         
