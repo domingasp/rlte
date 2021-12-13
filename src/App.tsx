@@ -395,6 +395,8 @@ const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDa
     return d;
   }
 
+  const dateRangeBreakpoint = 620;
+
   return (
     <Accordion mt={4} allowMultiple>
       <AccordionItem>
@@ -445,81 +447,118 @@ const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDa
         </AccordionPanel>
       </AccordionItem>
       <AccordionItem>
-        <AccordionButton>
-          <Flex alignItems="center" flex={1}>
+        <AccordionButton flex={1}>
+          <Wrap flex={1}>
+          <WrapItem>
+          <Flex alignItems="center" flex={1} minW="150px">
             <FaCalendar />
             <Text ml={4}>Filter by Date</Text>
           </Flex>
+          </WrapItem>
           {
             isFiltered
-            ? <Flex alignItems="center" mr={2}>
-              {
-                (filteredStartDate && <Tag colorScheme="cyan">{dateToString(filteredStartDate)}</Tag>)
-                || <Tag colorScheme="cyan">No start date</Tag>
-              }
-              <Box mx={2}><BsArrowRight /></Box>
-              {
-                (filteredEndDate && <Tag colorScheme="cyan">{dateToString(filteredEndDate)}</Tag>)
-                || <Tag colorScheme="cyan">No end date</Tag>
-              }
-            </Flex>
+            ? <WrapItem justifyContent="flex-end" width="100%" flex={width <= dateRangeBreakpoint - 100 ? undefined : 1}>
+                <Flex alignItems="center" mr={2}>
+                {
+                  (filteredStartDate && <Tag colorScheme="cyan">{dateToString(filteredStartDate)}</Tag>)
+                  || <Tag colorScheme="cyan">No start date</Tag>
+                }
+                <Box mx={2}><BsArrowRight /></Box>
+                {
+                  (filteredEndDate && <Tag colorScheme="cyan">{dateToString(filteredEndDate)}</Tag>)
+                  || <Tag colorScheme="cyan">No end date</Tag>
+                }
+              </Flex>
+            </WrapItem>
             : null
           }
+          </Wrap>
           <AccordionIcon />
         </AccordionButton>
         <AccordionPanel>
           <Flex flexDirection="column">
-            <Flex alignItems="center">
-              <FormLabel mb={0} mr={2} flex={1}>Date Range:</FormLabel>
-              <ReactDatePicker
-                dateFormat="dd/MM/yy HH:mm"
-                selected={startDate}
-                onChange={(date) => setStartDate(date as Date)}
-                selectsStart
+            <Flex alignItems="center" flexDir={width <= dateRangeBreakpoint ? "column" : "row"}>
+              <FormLabel mb={0} mr={2} flex={1}
+                minW="100px" width={width <= dateRangeBreakpoint ? "100%" : undefined}
+              >
+                Date Range:
+              </FormLabel>
 
-                showTimeSelect
-                startDate={startDate}
-                endDate={endDate}
-                maxDate={endDate}
-                
-                timeFormat="HH:mm"
-                timeIntervals={15}
+              <Box
+                mt={width <= dateRangeBreakpoint ? 4 : 0}
+                width="100%"
+                maxW={width <= dateRangeBreakpoint ? undefined : "160px"}
+              >
+                <ReactDatePicker
+                  dateFormat="dd/MM/yy HH:mm"
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date as Date)}
+                  selectsStart
 
-                placeholderText="Start Date..."
-              />
-              <Box flex={0} mx={4}><BsArrowRight /></Box>
-              <ReactDatePicker
-                dateFormat="dd/MM/yy HH:mm"
-                selected={endDate}
-                onChange={(date) => setEndDate(date as Date)}
-                selectsEnd
+                  showTimeSelect
+                  startDate={startDate}
+                  endDate={endDate}
+                  maxDate={endDate}
+                  
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
 
-                showTimeSelect
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
+                  placeholderText="Start Date..."
+                />
+              </Box>
 
-                timeFormat="HH:mm"
-                timeIntervals={15}
+              {
+                width > dateRangeBreakpoint
+                ? <Box flex={0} mx={4}><BsArrowRight /></Box>
+                : null
+              }
+              
+              <Box
+                mt={width <= dateRangeBreakpoint ? 4 : 0}
+                width="100%"
+                maxW={width <= dateRangeBreakpoint ? undefined : "160px"}
+              >
+                <ReactDatePicker
+                  dateFormat="dd/MM/yy HH:mm"
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date as Date)}
+                  selectsEnd
 
-                placeholderText="End Date..."
-              />
+                  showTimeSelect
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
 
-              <Button size="sm" colorScheme="cyan" variant="outline" ml={4}
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+
+                  placeholderText="End Date..."
+                />
+              </Box>
+
+              <Button size="sm" colorScheme="cyan" variant="outline"
+                ml={width <= dateRangeBreakpoint ? 0 : 4}
                 onClick={onClickApply} isDisabled={!startDate && !endDate}
+                width={width <= dateRangeBreakpoint ? "100%" : undefined}
+                mt={width <= dateRangeBreakpoint ? 4 : 0}
               >
                 Apply
               </Button>
             </Flex>
-            <Flex mt={4} alignContent="center">
-              <FormLabel mb={0} mr={2} flex={1} alignSelf="center">Quick Filter:</FormLabel>
-              <ButtonGroup colorScheme="cyan" size="sm" variant="outline">
-                <Button onClick={() => onClickLastXTime(60)}>Last hour</Button>
-                <Button onClick={() => onClickLastXTime(30)}>Last 30 mins</Button>
-                <Button onClick={() => onClickLastXTime(15)}>Last 15 mins</Button>
-                <Button colorScheme="red" onClick={onClickClear}>Clear</Button>
-              </ButtonGroup>
-            </Flex>
+            <Wrap mt={4} alignContent="center">
+              <FormLabel mb={0} mr={2} flex={1} alignSelf="center" minW="100px">Quick Filter:</FormLabel>
+
+              <WrapItem justifyContent="flex-end">
+                <ButtonGroup colorScheme="cyan" size="sm" variant="outline">
+                  <Wrap justify="center">
+                    <Button onClick={() => onClickLastXTime(60)}>Last hour</Button>
+                    <Button onClick={() => onClickLastXTime(30)}>Last 30 mins</Button>
+                    <Button onClick={() => onClickLastXTime(15)}>Last 15 mins</Button>
+                    <Button colorScheme="red" onClick={onClickClear}>Clear</Button>
+                  </Wrap>
+                </ButtonGroup>
+              </WrapItem>
+            </Wrap>
           </Flex>
         </AccordionPanel>
       </AccordionItem>
@@ -945,7 +984,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
     var max = 0;
     var currentMax = 0;
     numbers.forEach(x => {
-      if (x.number.color === color || (includeGreen && x.number.color == NumberColor.Green)) {
+      if (x.number.color === color || (includeGreen && x.number.color === NumberColor.Green)) {
         currentMax += 1;
       } else {
         if (currentMax > max) {
@@ -956,7 +995,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
       }
     });
 
-    if (max == 0) max = currentMax;
+    if (max === 0) max = currentMax;
     return max;
   }
 
@@ -975,7 +1014,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
     var currentMax = 0;
     numbers.forEach(x => {
       if ((parseInt(x.number.value) >= minInRange && parseInt(x.number.value) <= maxInRange)
-        || (includeGreen && x.number.color == NumberColor.Green)) {
+        || (includeGreen && x.number.color === NumberColor.Green)) {
         currentMax += 1;
       } else {
         if (currentMax > max) {
@@ -986,7 +1025,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
       }
     });
 
-    if (max == 0) max = currentMax;
+    if (max === 0) max = currentMax;
     return max;
   }
 
@@ -1005,7 +1044,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
     var currentMax = 0;
     numbers.forEach(x => {
       if ((parseInt(x.number.value) > 0 && parseInt(x.number.value) % modulo === shouldEqual)
-        || (includeGreen && x.number.color == NumberColor.Green)) {
+        || (includeGreen && x.number.color === NumberColor.Green)) {
         currentMax += 1;
       } else {
         if (currentMax > max) {
@@ -1016,7 +1055,7 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
       }
     });
 
-    if (max == 0) max = currentMax;
+    if (max === 0) max = currentMax;
     return max;
   }
 

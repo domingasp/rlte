@@ -1,7 +1,3 @@
-.react-datepicker-wrapper {
-    max-width: 160px;
-}
-
 .react-datepicker__input-container input {
     outline: 0;
     transition-property: var(--chakra-transition-property-common);
