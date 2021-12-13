@@ -952,7 +952,7 @@ type NumberStatProps = {
 }
 const NumberStat = ({ label, value, leftIcon }: NumberStatProps) => {
   return (
-    <HStack border="1px solid white" px={4} py={3} borderRadius="md" flex={1}>
+    <VStack border="1px solid white" px={4} py={3} borderRadius="md" flex={1}>
       <HStack maxW="128px" flex={1}>
         <HStack px={3}>
           { leftIcon }
@@ -962,7 +962,7 @@ const NumberStat = ({ label, value, leftIcon }: NumberStatProps) => {
         </HStack>
       </HStack>
       <Text fontSize="4xl" flex={1} fontWeight="semibold" textAlign="center">{value}</Text>
-    </HStack>
+    </VStack>
   )
 }
 
@@ -1062,18 +1062,26 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
   return (
     <VStack>
       <HStack mb={4} alignSelf="stretch">
-        <Heading size="md" alignSelf="flex-start" flex={1}>Max Numbers in a Row:</Heading>
-        <Checkbox
-          size="lg"
-          value={"includeGreen"}
-          onChange={(e) => setIncludeGreen(!includeGreen)}
-        >
-          <HStack fontSize="md">
-            <Text>Include</Text>
-            <Flex display="inline-flex" backgroundColor="green" width="15px" height="15px" borderRadius="full" ml="1px" />
-            <Text>Green</Text>
-          </HStack>
-        </Checkbox>
+        <Wrap width="100%">
+          <Heading size="md" alignSelf="flex-start"
+            flex={1} minW="250px"
+          >
+            Max Numbers in a Row:
+          </Heading>
+          <Checkbox
+            size="lg"
+            value={"includeGreen"}
+            onChange={(e) => setIncludeGreen(!includeGreen)}
+            justifyContent="flex-end"
+            flex={1}
+          >
+            <HStack fontSize="md">
+              <Text>Include</Text>
+              <Flex display="inline-flex" backgroundColor="green" width="15px" height="15px" borderRadius="full" ml="1px" />
+              <Text>Green</Text>
+            </HStack>
+          </Checkbox>
+        </Wrap>
       </HStack>
         <SimpleGrid columns={6} gap={3} flex={1} alignSelf="stretch">
           <GridItem colSpan={3}>
@@ -1194,7 +1202,7 @@ const App = () => {
           setFilteredEndDate={setFilteredEndDate}        
         />
         
-        <Flex mt={2} flexDir="column">
+        <Flex mt={2} flexDir="column" mb={6}>
           
           <Flex flex={1} flexDir={width <= statsBreakpoint ? "column" : "row"} mt={2}
             alignItems="flex-start"
@@ -1221,8 +1229,8 @@ const App = () => {
             <StatsTable calledNumbers={filterCalledByDate()} />
           </Flex>
         </Flex>
-        {/* <Divider my={4} />
-        <MaxInARowStats calledNumbers={filterCalledByDate()} /> */}
+        {width > statsBreakpoint && <Divider mb={4} />}
+        <MaxInARowStats calledNumbers={filterCalledByDate()} />
 
       </Flex>
     </Flex>
