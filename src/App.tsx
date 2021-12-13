@@ -595,7 +595,6 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
             size="sm"
             onClick={() => setShowNumber(!showNumber)}
             leftIcon={showNumber ? <FaEyeSlash /> : <FaEye />}
-            mr={2}
           >
             Toggle Text
           </Button>
@@ -626,7 +625,7 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
             {
               calledNumbers.slice().reverse().map(x => 
                 <Button key={x.time.getTime().toString()}
-                  size="sm" height="25px" width="26px"
+                  size="sm" height="25px" width="100%"
                   backgroundColor={getButtonBackgroundColor(x.number.color)}
                   _hover={{backgroundColor: getButtonHoverBackgroundColor(x.number.color)}}
                   padding={0}
@@ -749,9 +748,9 @@ const DistributionGraph = ({ calledNumbers }: DistributionGraphProps) => {
           <XAxis dataKey="name" stroke="var(--chakra-colors-gray-200)" type={"category"} interval={1}
             angle={-90} tick={{ fontSize: 14, dx: -5, dy: 10 }}
           />
-          <YAxis allowDecimals={false} width={30} stroke="var(--chakra-colors-gray-200)" />
+          <YAxis allowDecimals={false} width={20} stroke="var(--chakra-colors-gray-200)" />
           <Bar dataKey="amt" />
-          <Tooltip content={<CustomGraphTooltip />} />
+          <Tooltip content={<CustomGraphTooltip />} cursor={{"fill": "var(--chakra-colors-cyan-500)", "opacity": "0.25"}} />
         </BarChart>
       </ResponsiveContainer>
     </Flex>
@@ -780,7 +779,7 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
 
   return (
     <Flex flex={1} margin={0} marginInlineStart="0 !important"
-      pl={2} flexDir="column" width="100%"
+      flexDir="column" width="100%"
     >
       <Heading size="md" mb={2}>Statistics:</Heading>
       <Table size="sm">
@@ -1203,7 +1202,7 @@ const App = () => {
             
             <Flex flexDir="column" flex={1} width="100%"
               borderRight={width > statsBreakpoint ? "1px solid var(--chakra-colors-gray-700)" : undefined}
-              mr={width > statsBreakpoint ? 2 : 0}
+              mr={width > statsBreakpoint ? 4 : 0}
               pr={width > statsBreakpoint ? 2 : 0}
             >
               <RecentlyCalled
