@@ -1,9 +1,9 @@
 import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack, Divider, Checkbox } from '@chakra-ui/react';
-import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash } from "react-icons/fa";
+import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash, FaRegHandPointUp } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
 import { AiOutlineBorderBottom, AiOutlineBorderHorizontal, AiOutlineBorderLeft, AiOutlineBorderRight, AiOutlineBorderTop, AiOutlineBorderVerticle } from "react-icons/ai";
-import React, { createRef, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import "./react-datepicker.css";
@@ -258,13 +258,26 @@ type RouletteTableProps = {
   appendToCalled: (num: RouletteNumber) => void
 }
 const RouletteTable = ({ appendToCalled }: RouletteTableProps) => {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [width]);
+
   return (
-    <Flex maxWidth="700px" justifyContent="center" mt={3}>
+    <VStack mt={3} overflowX="auto" alignSelf="center"
+      maxWidth="700px" width="100%"
+    >
       <Grid
-        templateRows="repeat(6, 1fr)"
+        templateRows={width <= 730 ? "repeat(7, 1fr)" : "repeat(6, 1fr)"}
         templateColumns="repeat(13, 1fr)"
         gap={1}
-        height="180px"
+        height={width <= 730 ? "224px" : "180px"}
+        alignSelf="flex-start"
       >
         {
           rouletteNumbers.map(x => 
@@ -284,8 +297,19 @@ const RouletteTable = ({ appendToCalled }: RouletteTableProps) => {
             )
           )
         }
+
+        {
+          width <= 730
+          ? <GridItem rowSpan={1} colSpan={13} background="gray.700" color="gray.400">
+              <HStack py={3} pl={3}>
+                <FaRegHandPointUp />
+                <Text>Scroll right to see rest of table...</Text>
+              </HStack>
+          </GridItem>
+          : null
+        }
       </Grid>
-    </Flex>
+    </VStack>
   )
 }
 
@@ -1091,13 +1115,14 @@ const App = () => {
         calledNumbers={calledNumbers}
         setCalledNumbers={setCalledNumbers}
       />
-      <Flex maxWidth="800px" flexDir="column" flex={1} alignSelf="center"
-        padding={4}
+      <Flex maxWidth="800px" width="100%" flexDir="column" alignSelf="center"
+        alignContent="center" padding={4}
         pb={{"base": 8, "md": 4}}
+        overflowX="hidden"
       >
         <RouletteTable appendToCalled={appendToCalled} />
         
-        <ToolsAccordion
+        {/* <ToolsAccordion
           filteredStartDate={filteredStartDate}
           filteredEndDate={filteredEndDate}
           setFilteredStartDate={setFilteredStartDate}
@@ -1122,7 +1147,7 @@ const App = () => {
           </HStack>
         </Flex>
         <Divider my={4} />
-        <MaxInARowStats calledNumbers={filterCalledByDate()} />
+        <MaxInARowStats calledNumbers={filterCalledByDate()} /> */}
 
       </Flex>
     </Flex>
