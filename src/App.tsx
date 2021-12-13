@@ -611,9 +611,9 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
                 <Text ml={2}>No numbers called.</Text>
           </Flex>
           : <Flex overflowY="auto"  flex={1} height="inherit"
-            p={2} border="1px solid white" 
+            p={2} border="1px solid white" borderRadius="md"
           ><SimpleGrid columns={10} gap={1} flex={1} height="0%" maxH="20px"
-            borderRadius="md"
+          borderRadius="md"
             _after={{
               content: '" "',
               display: "block",
