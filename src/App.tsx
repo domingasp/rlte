@@ -779,10 +779,10 @@ const StatsTable = ({ calledNumbers }: StatsTableProps) => {
   }
 
   return (
-    <Flex flex={1} borderLeft="1px solid var(--chakra-colors-gray-700)" margin={0} marginInlineStart="0 !important"
-      paddingX={2} flexDir="column"
+    <Flex flex={1} margin={0} marginInlineStart="0 !important"
+      pl={2} flexDir="column" width="100%"
     >
-      <Heading size="md" mb={2} ml={4}>Statistics:</Heading>
+      <Heading size="md" mb={2}>Statistics:</Heading>
       <Table size="sm">
         <Thead>
           <Tr>
@@ -1126,6 +1126,17 @@ const MaxInARowStats = ({ calledNumbers }: MaxInARowStatsProps) => {
 }
 
 const App = () => {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [width]);
+  const statsBreakpoint = 630;
+
   const [calledNumbers, setCalledNumbers] = useState<CalledNumber[]>([]);
 
   const [filteredStartDate, setFilteredStartDate] = useState<Date | undefined>(undefined);
@@ -1184,10 +1195,17 @@ const App = () => {
           setFilteredEndDate={setFilteredEndDate}        
         />
         
-        {/* <Flex mt={2} flexDir="column">
-          <HStack flex={1} mt={2} alignItems="flex-start">
+        <Flex mt={2} flexDir="column">
+          
+          <Flex flex={1} flexDir={width <= statsBreakpoint ? "column" : "row"} mt={2}
+            alignItems="flex-start"
+          >
             
-            <Flex flexDir="column" flex={1}>
+            <Flex flexDir="column" flex={1} width="100%"
+              borderRight={width > statsBreakpoint ? "1px solid var(--chakra-colors-gray-700)" : undefined}
+              mr={width > statsBreakpoint ? 2 : 0}
+              pr={width > statsBreakpoint ? 2 : 0}
+            >
               <RecentlyCalled
                 calledNumbers={filterCalledByDate()}
                 removeCalledNumber={removeCalledNumber}
@@ -1198,10 +1216,13 @@ const App = () => {
               />
             </Flex>
             
+            {
+              width <= statsBreakpoint && <Divider my={3} />
+            }
             <StatsTable calledNumbers={filterCalledByDate()} />
-          </HStack>
+          </Flex>
         </Flex>
-        <Divider my={4} />
+        {/* <Divider my={4} />
         <MaxInARowStats calledNumbers={filterCalledByDate()} /> */}
 
       </Flex>
