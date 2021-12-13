@@ -1,4 +1,4 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack, Divider, Checkbox } from '@chakra-ui/react';
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack, Divider, Checkbox, Wrap, WrapItem } from '@chakra-ui/react';
 import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash, FaRegHandPointUp } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
@@ -320,6 +320,16 @@ type ToolsAccordionProps = {
   setFilteredEndDate: (newDate: Date | undefined) => void,
 }
 const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDate, setFilteredEndDate }: ToolsAccordionProps) => {
+  const [width, setWidth] = useState(window.innerWidth);
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [width]);
+  
   const [numberOfBets, setNumberOfBets] = useState<number>(0);
   const [startingBet, setStartingBet] = useState<number>(0);
   const totalNeeded = () => {
@@ -396,36 +406,42 @@ const ToolsAccordion = ({ filteredStartDate, filteredEndDate, setFilteredStartDa
           <AccordionIcon />
         </AccordionButton>
         <AccordionPanel>
-          <Flex flexDir="column">
-            <Flex display="flex" alignItems="center">
-              <Text minW="35px">I want to be safe for</Text>
-              <Input size="lg" variant="flushed" placeholder="#" type="number"
-                maxW="75px" textAlign="center"
-                mx={2}
-                onChange={(e) => setNumberOfBets(parseInt(e.target.value))}
-              />
-              
-              <Text minW="225px">bets, with a starting bet of</Text>
-              <InputGroup maxW="150px" mx={2} size="lg" >
-                <InputLeftElement
-                  maxW="20px"
-                  pointerEvents='none'
-                  height="100%"
-                  children='$'
+          <VStack width="100%">
+            <Wrap width="100%">
+              <WrapItem alignItems="center">
+                <Text minW="200px">How many bets?</Text>
+              </WrapItem>
+              <WrapItem flex={1}>
+                <Input minW="200px" size="lg" variant="flushed" placeholder="#" type="number"
+                  textAlign="center" flex={1}
+                  onChange={(e) => setNumberOfBets(parseInt(e.target.value))}
                 />
-                <Input variant="flushed" placeholder="123456" type="number"
+              </WrapItem>
+            </Wrap>
+            
+            <Wrap width="100%" mt={width <= 471 ? "var(--chakra-space-4) !important" : ""}>
+              <WrapItem alignItems="center">
+                <Text minW="200px">What's the starting bet?</Text>
+              </WrapItem>
+              <WrapItem flex={1}>
+                <Input minW="200px" size="lg" variant="flushed" placeholder="123456" type="number"
                   onChange={(e) => setStartingBet(parseInt(e.target.value))}
-                  textAlign="center"
+                  textAlign="center" flex={1}
                 />
-              </InputGroup>
-              <Text>.</Text>
-            </Flex>
+              </WrapItem>
+            </Wrap>
 
-            <Flex mt={4} alignItems="center">
-              <Text fontWeight="bold">You will need:</Text>
-              <Text ml={8} fontSize="2xl">${totalNeeded()}</Text>
-            </Flex>
-          </Flex>
+            <Divider marginTop="28px !important" marginBottom="10px !important" />
+
+            <HStack width="100%" alignItems="center">
+              <Text fontWeight="normal">You will need:</Text>
+              <Text ml={8} fontSize="2xl" flex={1}
+                textAlign="center" fontWeight="medium"
+              >
+                ${totalNeeded()}
+              </Text>
+            </HStack>
+          </VStack>
         </AccordionPanel>
       </AccordionItem>
       <AccordionItem>
@@ -1122,14 +1138,14 @@ const App = () => {
       >
         <RouletteTable appendToCalled={appendToCalled} />
         
-        {/* <ToolsAccordion
+        <ToolsAccordion
           filteredStartDate={filteredStartDate}
           filteredEndDate={filteredEndDate}
           setFilteredStartDate={setFilteredStartDate}
           setFilteredEndDate={setFilteredEndDate}        
         />
         
-        <Flex mt={2} flexDir="column">
+        {/* <Flex mt={2} flexDir="column">
           <HStack flex={1} mt={2} alignItems="flex-start">
             
             <Flex flexDir="column" flex={1}>
