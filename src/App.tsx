@@ -1,4 +1,4 @@
-import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, InputGroup, InputLeftElement, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack, Divider, Checkbox, Wrap, WrapItem } from '@chakra-ui/react';
+import { Button, Text, Flex, HStack, Box, SimpleGrid, Grid, GridItem, Table, Thead, Td, Tbody, Tr, Th, Heading, ButtonGroup, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Input, useToast, FormLabel, Tag, ModalOverlay, Modal, ModalContent, ModalHeader, useDisclosure, ModalCloseButton, ModalFooter, VStack, Divider, Checkbox, Wrap, WrapItem, ModalBody } from '@chakra-ui/react';
 import { FaFileImport, FaFileExport, FaEyeSlash, FaEye, FaCalculator, FaInfoCircle, FaCalendar, FaTrash, FaRegHandPointUp } from "react-icons/fa";
 import { GiCartwheel } from "react-icons/gi";
 import { BsArrowRight, BsCircleHalf, BsSquareHalf, BsTriangleHalf } from "react-icons/bs"
@@ -647,20 +647,24 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
 
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent mx={2}>
         <ModalHeader>
           <Flex>
-            <Text>Delete</Text>
-            <Box backgroundColor={getButtonBackgroundColor(activeNumber.number.color)}
-              width="35px" textAlign="center"
-              mx={2} borderRadius="md"
-            >
-              {activeNumber.number.value}
-            </Box>
-            <Text>called at {dateToString(activeNumber.time)}?</Text>
+            <Text>Delete Number?</Text>
           </Flex>
         </ModalHeader>
         <ModalCloseButton />
+        <ModalBody>
+          <Text as="span">Delete</Text>
+          <Box backgroundColor={getButtonBackgroundColor(activeNumber.number.color)}
+            width="35px" textAlign="center"
+            mx={2} borderRadius="md"
+            display="inline-block"
+          >
+            {activeNumber.number.value}
+          </Box>
+          <Text as="span">called at {<Text as="span" fontWeight="semibold">{dateToString(activeNumber.time)}</Text>}?</Text>
+        </ModalBody>
         <ModalFooter>
           <ButtonGroup size="sm" justifyContent="space-between">
             <Button variant="ghost" onClick={onClose}>Cancel</Button>
