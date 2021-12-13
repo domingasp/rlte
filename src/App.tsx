@@ -589,8 +589,8 @@ const RecentlyCalled = ({ calledNumbers, removeCalledNumber }: RecentlyCalledPro
     <>
     <Flex flexDir="column" mr={2}>
       <Flex alignItems="center" mb={2} justifyContent="space-between">
-        <Flex alignItems="center">
-          <Heading size="md">Recently Called:</Heading>
+        <Flex alignItems="center" width="100%">
+          <Heading size="md" flex={1}>Recently Called:</Heading>
           <Button ml={2}
             size="sm"
             onClick={() => setShowNumber(!showNumber)}
